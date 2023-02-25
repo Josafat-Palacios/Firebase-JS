@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS + Firebase</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-database.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body onload="read()"> 
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Citas Medicas</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Citas<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./consulta.html">Consultar Citas</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div class="container p-3 my-3">
+        <div class="row">
+
+            <div class="col-md-3">
+                <h4 style="text-align:left">Datos Personales</h4>
+                <form action="#">
+                    <div class="form-group ">
+                        <label for="Input1">No. Cita</label>
+                        <input type="text " class="form-control " id="Input1" placeholder="Ingrese su Numero de cita">
+                    </div>
+                    <div class="form-group">
+                        <label for="Input2">Nombre</label>
+                        <input type="text" class="form-control" id="Input2" placeholder="Ingrese su nombre y apellido">
+                    </div>
+                    <div class="form-group">
+                        <label for="Input3">Edad</label>
+                        <input type="text" class="form-control" id="Input3" placeholder="Ingrese edad">
+                    </div>
+                    <div class="form-group">
+                        <label for="Input4">Numero telefonico</label>
+                        <input type="text" class="form-control" id="Input4" placeholder="Ingrese su telefono">
+                    </div>
+
+                    <h4 style="text-align:left">Datos Consulta</h4>
+
+                    <div class="form-group ">
+                        <label for="Input5">Sintomas</label>
+                        <select class="form-control " id="Input5">
+                            <option value="selecciona">selecciona</option>
+                            <option value="Dolor de cuerpo">Dolor de cuerpo</option>
+                            <option value="Diarrea">Diarrea</option>
+                            <option value="Congetion nasal">Congetion nasal</option>
+                            <option value="Escalofrios">Escalofrios</option>
+                            <option value="Perdida de apetito">Perdida de apetito</option>
+                            <option value="Ninguno">Ninguno</option>
+                        </select>
+                    </div>
+
+
+                    
+                    <div class="form-group ">
+                        <label for="Input6">Padecimiento</label>
+                        <select class="form-control " id="Input6">
+                            <option value="selecciona">selecciona</option>
+                            <option value="Embarazo">Embarazo</option>
+                            <option value="Diabetes">Diabetes</option>
+                            <option value="Hipertesion">Hipertesion</option>
+                            <option value="Problemas de rinon">Problemas de rinon</option>
+                            <option value="Problemas de higado">Problemas de higado</option>
+                            <option value="Ninguno">Ninguno</option>
+                        </select>
+                    </div>
+                
+
+                <div class="form-group ">
+                    <label for="Input7">Alergias</label>
+                    <select class="form-control " id="Input7">
+                        <option value="selecciona">selecciona</option>
+                        <option value="Anticonvulsivos">Anticonvulsivos</option>
+                        <option value="Insulina">Insulina</option>
+                        <option value="Penicilina">Penicilina</option>
+                        <option value="Sulfamidas">Sulfamidas</option>
+                        <option value="Antibióticos conexos">Antibióticos conexos</option>
+                        <option value="Ninguno">Ninguno</option>
+                    </select>
+                </div>
+
+                <button type="submit " class="btn btn-primary" onclick="createR()">Enviar</button>
+                <button type="reset " class="btn btn-secondary" onclick="resetFields()">Limpiar</button>
+            </form>
+
+
+            </div>
+
+            <div class="col-md-8">
+                <h3 style="text-align:center">Lista de citas</h3>
+            
+                <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">No. Cita</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Sintomas</th>
+                        <th scope="col">Padecimiento</th>
+                        <th scope="col">Alergia</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody id='Table1'>
+            
+            
+                    </tbody>
+                  </table>
+                
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+
+
+</html>
